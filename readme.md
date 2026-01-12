@@ -36,6 +36,8 @@ Before you begin, you'll need:
 
 The system utilizes a structured pipeline to transform raw API data into research-ready insights:
 
+<img width="1070" height="261" alt="Screenshot 2026-01-12 at 12 17 08 AM" src="https://github.com/user-attachments/assets/08144cc0-8424-40fa-8aa5-310ce435852c" />
+
 1. **Manual Trigger**: Initiates the research cycle
 2. **HTTP Request (Reddit)**: Authenticates and fetches top posts using query parameters (`q=OpenAI`, `sort=top`, `t=month`)
 3. **Split Out**: Explodes the `data.children` array into individual post objects for processing

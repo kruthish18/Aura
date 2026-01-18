@@ -1,228 +1,270 @@
 {
-    "name": "demo reddit",
-    "nodes": [
-      {
-        "parameters": {},
-        "type": "n8n-nodes-base.manualTrigger",
-        "typeVersion": 1,
-        "position": [
-          0,
-          0
-        ],
-        "id": "596c03b5-afe2-4f5c-a5e4-42a5fb763c3c",
-        "name": "When clicking ‘Execute workflow’"
-      },
-      {
-        "parameters": {
-          "url": "https://oauth.reddit.com/r/OpenAI/search",
-          "authentication": "predefinedCredentialType",
-          "nodeCredentialType": "redditOAuth2Api",
-          "sendQuery": true,
-          "queryParameters": {
-            "parameters": [
-              {
-                "name": "q",
-                "value": "OpenAI"
-              },
-              {
-                "name": "sort",
-                "value": "top"
-              },
-              {
-                "name": "t",
-                "value": "month"
-              },
-              {
-                "name": "limit",
-                "value": "25"
-              }
-            ]
-          },
-          "options": {
-            "pagination": {
-              "pagination": {
-                "parameters": {
-                  "parameters": [
-                    {
-                      "name": "after",
-                      "value": "={{ $response.body.data.after }}"
-                    }
-                  ]
-                },
-                "paginationCompleteWhen": "other",
-                "completeExpression": "={{ !$response.body.data.after }}",
-                "limitPagesFetched": true,
-                "maxRequests": 2,
-                "requestInterval": 50
-              }
+  "name": "Aura Demo reddit research",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -256
+      ],
+      "id": "596c03b5-afe2-4f5c-a5e4-42a5fb763c3c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://oauth.reddit.com/r/OpenAI/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "redditOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "{{ $json.body.query }}"
+            },
+            {
+              "name": "sort",
+              "value": "top"
+            },
+            {
+              "name": "t",
+              "value": "month"
+            },
+            {
+              "name": "limit",
+              "value": "25"
             }
-          }
+          ]
         },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.3,
-        "position": [
-          208,
-          0
-        ],
-        "id": "6288fd02-b059-4a16-85b9-c4f40974a879",
-        "name": "HTTP Request",
-        "credentials": {
-          "redditOAuth2Api": {
-            "id": "FzB1NRePcgOUo8Uf",
-            "name": "Reddit account"
+        "options": {
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "after",
+                    "value": "={{ $response.body.data.after }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.data.after }}",
+              "limitPagesFetched": true,
+              "maxRequests": 2,
+              "requestInterval": 50
+            }
           }
         }
       },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "7e33d1a8-ba3a-4039-af18-97b174f2402c",
-                "name": "Post Title",
-                "value": "={{ $json.data.title }}",
-                "type": "string"
-              },
-              {
-                "id": "20dbc777-ba37-41ed-9549-13c081155975",
-                "name": "User",
-                "value": "={{ $json.data.author }}",
-                "type": "string"
-              },
-              {
-                "id": "7765eff9-737b-4a1f-8e0c-ea828114029c",
-                "name": "Upvotes",
-                "value": "={{ $json.data.ups }}",
-                "type": "string"
-              },
-              {
-                "id": "fc641dd5-5fec-439e-8b07-375571b1dfb9",
-                "name": "Bodytexts",
-                "value": "={{ $json.data.selftext }}",
-                "type": "string"
-              },
-              {
-                "id": "5eb5fd24-130e-406b-881d-f5c6a5f24fc6",
-                "name": "Subreddit",
-                "value": "={{ $json.data.subreddit }}",
-                "type": "string"
-              },
-              {
-                "id": "18681532-f883-4bff-a21d-7b7e77b8d84d",
-                "name": "URL",
-                "value": "={{ 'https://reddit.com' + $json.data.permalink }}",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          640,
-          0
-        ],
-        "id": "f1758986-af0d-4351-851e-65ba51da839b",
-        "name": "Edit Fields"
-      },
-      {
-        "parameters": {
-          "fieldToSplitOut": "data.children",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.splitOut",
-        "typeVersion": 1,
-        "position": [
-          416,
-          0
-        ],
-        "id": "339a9456-070f-49f2-bb6e-14b2fb40b0af",
-        "name": "Split Out"
-      },
-      {
-        "parameters": {
-          "sortFieldsUi": {
-            "sortField": [
-              {
-                "fieldName": "Upvotes",
-                "order": "descending"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.sort",
-        "typeVersion": 1,
-        "position": [
-          848,
-          0
-        ],
-        "id": "68f408d7-0064-48cf-a396-737576ecfd8a",
-        "name": "Sort"
-      }
-    ],
-    "pinData": {},
-    "connections": {
-      "When clicking ‘Execute workflow’": {
-        "main": [
-          [
-            {
-              "node": "HTTP Request",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "HTTP Request": {
-        "main": [
-          [
-            {
-              "node": "Split Out",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Split Out": {
-        "main": [
-          [
-            {
-              "node": "Edit Fields",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Edit Fields": {
-        "main": [
-          [
-            {
-              "node": "Sort",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Sort": {
-        "main": [
-          []
-        ]
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6288fd02-b059-4a16-85b9-c4f40974a879",
+      "name": "HTTP Request",
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "FzB1NRePcgOUo8Uf",
+          "name": "Reddit account"
+        }
       }
     },
-    "active": false,
-    "settings": {
-      "executionOrder": "v1"
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.children",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "339a9456-070f-49f2-bb6e-14b2fb40b0af",
+      "name": "Split Out"
     },
-    "versionId": "b56255f0-101e-4984-beb0-942ecd71a4ab",
-    "meta": {
-      "templateCredsSetupCompleted": true,
-      "instanceId": "1f73e9c555172f1cb226ec7dbf517bc1657d91baab280e887b12495d4d71d307"
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "Upvotes",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        912,
+        0
+      ],
+      "id": "68f408d7-0064-48cf-a396-737576ecfd8a",
+      "name": "Sort"
     },
-    "id": "QmbCaMRym6P7sjK4",
-    "tags": []
-  }
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7e33d1a8-ba3a-4039-af18-97b174f2402c",
+              "name": "Post Title",
+              "value": "={{ $json.data.title }}",
+              "type": "string"
+            },
+            {
+              "id": "20dbc777-ba37-41ed-9549-13c081155975",
+              "name": "User",
+              "value": "={{ $json.data.author }}",
+              "type": "string"
+            },
+            {
+              "id": "7765eff9-737b-4a1f-8e0c-ea828114029c",
+              "name": "Upvotes",
+              "value": "={{ $json.data.ups }}",
+              "type": "string"
+            },
+            {
+              "id": "fc641dd5-5fec-439e-8b07-375571b1dfb9",
+              "name": "Bodytexts",
+              "value": "={{ $json.data.selftext }}",
+              "type": "string"
+            },
+            {
+              "id": "5eb5fd24-130e-406b-881d-f5c6a5f24fc6",
+              "name": "Subreddit",
+              "value": "={{ $json.data.subreddit }}",
+              "type": "string"
+            },
+            {
+              "id": "18681532-f883-4bff-a21d-7b7e77b8d84d",
+              "name": "URL",
+              "value": "={{ 'https://reddit.com' + $json.data.permalink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        0
+      ],
+      "id": "f1758986-af0d-4351-851e-65ba51da839b",
+      "name": "Extract required fields only"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dd898add-0a6e-42ed-b336-4763a6615ca0",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "c15cff2b-3956-4990-a23c-62d1b42b4d84",
+      "name": "Webhook",
+      "webhookId": "dd898add-0a6e-42ed-b336-4763a6615ca0"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "74647b2e-d41c-4932-ab03-327f46394ba4",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Extract required fields only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract required fields only": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7aec336f-e732-4d30-b027-b7ba8a4253bb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1f73e9c555172f1cb226ec7dbf517bc1657d91baab280e887b12495d4d71d307"
+  },
+  "id": "QmbCaMRym6P7sjK4",
+  "tags": []
+}

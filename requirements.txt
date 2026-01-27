@@ -1,0 +1,4 @@
+gradio==5.23.2
+pydantic==2.9.1
+pandas
+requests
